@@ -11,7 +11,7 @@ final todoProvider =
     StateNotifierProvider.autoDispose<TodoNotifier, TodoState>((ref) {
   return TodoNotifier(ref);
 });
-
+    final searchQueryProvider = StateProvider<String>((ref) => '');
 class TodoNotifier extends StateNotifier<TodoState> {
   TodoNotifier(this.ref) : super(const TodoState());
   final Ref ref;
@@ -44,17 +44,17 @@ class TodoNotifier extends StateNotifier<TodoState> {
       final response = await _apiService.createCoupon(request);
       state = state.copyWith(createTodoState: UiState.success(response));
     } catch (e) {
-      state = state.copyWith(createTodoState: UiState.error((e).toString()));
+      state = state.copyWith(createTodoState: UiState.error(e.toString()));
     }
   }
 
-  void updateCoupon(int id, UpdateTodo updateTodo) async {
+  void updateTodo(int id, UpdateTodo updateTodo) async {
     try {
       state = state.copyWith(updateTodoState: const UiState.loading());
       final response = await _apiService.updateTodo(id, updateTodo);
       state = state.copyWith(updateTodoState: UiState.success(response));
     } catch (e) {
-      state = state.copyWith(updateTodoState: UiState.error((e).toString()));
+      state = state.copyWith(updateTodoState: UiState.error(e.toString()));
     }
   }
 
@@ -63,8 +63,6 @@ class TodoNotifier extends StateNotifier<TodoState> {
       state = state.copyWith(deleteTodoState: const UiState.loading());
       final response = await _apiService.deleteTodo(id);
       state = state.copyWith(deleteTodoState: UiState.success(response));
-      final controller = getTodoController();
-      controller.refresh();
     } catch (e) {
       state = state.copyWith(deleteTodoState: UiState.error(e.toString()));
     }

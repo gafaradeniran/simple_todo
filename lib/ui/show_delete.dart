@@ -16,21 +16,20 @@ void showDeleteDialog({
     builder: (context) {
       return HookConsumer(
         builder: (context, ref, child) {
-          // ref.listen(todoProvider.select((state) => state.deleteTodoState),
-          //     (previous, next) {
-          //   if (next.isSuccess) {
-          //     Navigator.pop(context);
-
-          //   } else if (next.isError) {
-          //     showDialog(
-          //       context: context,
-          //       builder: (_) => AlertDialog(
-          //         title: const Text("An error occurred"),
-          //         content: Text(next.message),
-          //       ),
-          //     );
-          //   }
-          // });
+          ref.listen(todoProvider.select((state) => state.deleteTodoState),
+              (previous, next) {
+            if (next.isSuccess) {
+              Navigator.pop(context);
+            } else if (next.isError) {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("An error occurred"),
+                  content: Text(next.message),
+                ),
+              );
+            }
+          });
 
           final deleteState =
               ref.watch(todoProvider.select((state) => state.deleteTodoState));
@@ -85,24 +84,26 @@ void showDeleteDialog({
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: MaterialButton(
-                          onPressed: () async {
-                            await ref
-                                .read(todoProvider.notifier)
-                                .deleteTodo(id);
-                            Navigator.pop(context);
-                          },
-                          elevation: 0,
-                          height: 40,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          color: Colors.red,
-                          child: const Text(
-                            "Proceed",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w600),
-                          ),
-                        ),
+                        child: Consumer(builder: (context, ref, child) {
+                          return MaterialButton(
+                            onPressed: () async {
+                              await ref
+                                  .read(todoProvider.notifier)
+                                  .deleteTodo(id);
+                                  
+                            },
+                            elevation: 0,
+                            height: 40,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            color: Colors.red,
+                            child: const Text(
+                              "Proceed",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),

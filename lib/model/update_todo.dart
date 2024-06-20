@@ -4,9 +4,16 @@ part 'update_todo.g.dart';
 
 @JsonSerializable()
 class UpdateTodo {
+  @JsonKey(name: 'id')
   final int id;
+
+  @JsonKey(name: 'todo')
   final String todo;
+
+  @JsonKey(name: 'completed')
   final bool completed;
+
+  @JsonKey(name: 'userId')
   final int userId;
 
   UpdateTodo({
@@ -17,5 +24,6 @@ class UpdateTodo {
   });
 
   factory UpdateTodo.fromJson(Map<String, dynamic> json) => _$UpdateTodoFromJson(json);
+
   Map<String, dynamic> toJson() => _$UpdateTodoToJson(this);
 }

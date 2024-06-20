@@ -19,7 +19,7 @@ abstract class TodoApiServices {
   @POST("/todos/add")
   Future<AddTodo> createCoupon(@Body() AddTodo body);
 
-  @PUT("/todos/{id}")
+  @PATCH("/todos/{id}")
   Future<UpdateTodo> updateTodo(@Path("id") int id, @Body() UpdateTodo updateTodo);
 
   @DELETE("/todos/{id}")

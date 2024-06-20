@@ -79,7 +79,7 @@ class _TodoApiServices implements TodoApiServices {
     _data.addAll(updateTodo.toJson());
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<UpdateTodo>(Options(
-      method: 'PUT',
+      method: 'PATCH',
       headers: _headers,
       extra: _extra,
     )

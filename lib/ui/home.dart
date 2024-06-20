@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:simple_todo/model/delete_todo.dart';
 import 'package:simple_todo/model/get_todo.dart';
 import 'package:simple_todo/provider/provider.dart';
 import 'package:simple_todo/ui/add_todos.dart';
@@ -16,14 +17,7 @@ class Homepage extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final controller =
         useMemoized(() => ref.read(todoProvider.notifier).getTodoController());
-
-  //  useEffect(() {
-  //     WidgetsBinding.instance.addPostFrameCallback((_) {
-  //       controller.refresh();
-  //     });
-  //     return null;
-  //   }, [controller]);
-
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Todos'),
@@ -48,6 +42,7 @@ class Homepage extends HookConsumerWidget {
                   controller: searchController,
                   hintText: "Search todos",
                   onChanged: (value) {},
+
                   // elevation: 0,
                   leading: const Icon(Icons.search),
                 ),
@@ -90,7 +85,8 @@ class Homepage extends HookConsumerWidget {
 
 class TodoContainer extends StatelessWidget {
   final TodoItem item;
-  const TodoContainer({super.key, required this.item});
+  final DeleteTodo? deleteTodo;
+  const TodoContainer({super.key, required this.item, this.deleteTodo});
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +133,12 @@ class TodoContainer extends StatelessWidget {
                     color: Colors.red,
                   )),
             ],
-          )
+          ),
+          if (deleteTodo?.isDeleted ?? false)
+            const Text(
+              'Todo already deleted',
+              style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+            ),
         ],
       ),
     );

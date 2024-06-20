@@ -19,12 +19,28 @@ void showEditTodo({
       builder: (context) {
         return HookConsumer(
           builder: (context, ref, child) {
-            final value = useState(false);
+            final value = useState(item.completed);
             final controller = useTextEditingController(text: item.todo);
             final userId = item.userId;
+            final updateId = id;
+
+            ref.listen(todoProvider.select((state) => state.updateTodoState),
+                (previous, next) {
+              if (next.isSuccess) {
+                Navigator.pop(context);
+              } else if (next.isError) {
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text("An error occurred"),
+                    content: Text(next.message),
+                  ),
+                );
+              }
+            });
             return SingleChildScrollView(
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height * 0.8,
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -60,7 +76,7 @@ void showEditTodo({
                         children: [
                           const Text('I have accomplished this to-do '),
                           Checkbox(
-                            value: item.completed,
+                            value: value.value,
                             onChanged: (newValue) {
                               value.value = newValue ?? false;
                             },
@@ -73,15 +89,14 @@ void showEditTodo({
                         height: 40,
                         color: Colors.deepPurple,
                         onPressed: () {
-                          ref.read(todoProvider.notifier).updateCoupon(
+                          ref.read(todoProvider.notifier).updateTodo(
                               id,
                               UpdateTodo(
-                                id: id,
+                                id: updateId,
                                 todo: controller.text,
                                 completed: value.value,
                                 userId: userId,
                               ));
-                          Navigator.pop(context);
                         },
                         child: const Text('Save'),
                       )),
