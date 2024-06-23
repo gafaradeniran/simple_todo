@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:simple_todo/model/delete_todo.dart';
 import 'package:simple_todo/model/get_todo.dart';
+import 'package:simple_todo/model/new_todo.dart';
 import 'package:simple_todo/provider/provider.dart';
 import 'package:simple_todo/ui/add_todos.dart';
 import 'package:simple_todo/ui/show_delete.dart';
@@ -14,6 +15,7 @@ class Homepage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AddTodo? todoItems;
     final searchController = useTextEditingController();
     final controller =
         useMemoized(() => ref.read(todoProvider.notifier).getTodoController());
@@ -26,7 +28,7 @@ class Homepage extends HookConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const AddTodo()));
+              context, MaterialPageRoute(builder: (_) => AddTodos(todoItems)));
         },
         child: const Icon(Icons.add, size: 35),
       ),

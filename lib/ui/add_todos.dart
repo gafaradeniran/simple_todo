@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:simple_todo/model/new_todo.dart';
+import 'package:simple_todo/provider/provider.dart';
 
-class AddTodo extends HookConsumerWidget {
-  const AddTodo({super.key});
+class AddTodos extends HookConsumerWidget {
+  final AddTodo? todoItems;
+  const AddTodos(this.todoItems, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = useTextEditingController();
-    final value = useState(false);
+    final controller = useTextEditingController(text: todoItems?.todo ?? '');
+    final value = useState(todoItems?.completed ?? false);
+    final userId = todoItems?.userId ?? 1;
+    final id = todoItems?.id ?? 0;
 
-    
+    final notifier = ref.read(todoProvider.notifier);
+    var listenable = todoProvider.select((value) => value.createTodoState);
+    // final state = ref.watch(listenable);
+    ref.listen(listenable, (previous, next) {
+      if (next.isError) {
+        AlertDialog(
+          title: const Text("An error occurred"),
+          content: Text(next.message),
+        );
+      }
+      if (next.isLoading) {
+        const Center(child: CircularProgressIndicator());
+      }
+      if (next.isSuccess) {
+        Navigator.pop(context);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Todo'),
@@ -50,6 +72,23 @@ class AddTodo extends HookConsumerWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 15),
+            Center(
+                child: MaterialButton(
+              minWidth: double.infinity,
+              height: 40,
+              color: Colors.deepPurple,
+              onPressed: () {
+                final todos = AddTodo(
+                  id: id,
+                  todo: controller.text,
+                  completed: value.value,
+                  userId: userId,
+                );
+                notifier.createTodo(request: todos);
+              },
+              child: const Text('Save'),
+            )),
           ],
         ),
       ),
