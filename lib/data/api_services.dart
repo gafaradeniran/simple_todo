@@ -12,15 +12,16 @@ abstract class TodoApiServices {
 
   @GET("/todos")
   Future<GetTodos> getTodos(
-    // @Query("limit") int limit, 
-    // @Query("skip") int skip
-    );
+      // @Query("limit") int limit,
+      // @Query("skip") int skip
+      );
 
   @POST("/todos/add")
   Future<AddTodo> createCoupon(@Body() AddTodo body);
 
   @PATCH("/todos/{id}")
-  Future<UpdateTodo> updateTodo(@Path("id") int id, @Body() UpdateTodo updateTodo);
+  Future<UpdateTodo> updateTodo(
+      @Path("id") int id, @Body() UpdateTodo updateTodo);
 
   @DELETE("/todos/{id}")
   Future<dynamic> deleteTodo(@Path("id") int id);

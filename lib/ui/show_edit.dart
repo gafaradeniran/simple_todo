@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_todo/model/get_todo.dart';
 import 'package:simple_todo/model/update_todo.dart';
 import 'package:simple_todo/provider/provider.dart';
+import 'package:simple_todo/utils/ui_state.dart';
 
 void showEditTodo({
   required BuildContext context,
@@ -28,16 +29,21 @@ void showEditTodo({
                 (previous, next) {
               if (next.isSuccess) {
                 Navigator.pop(context);
+                 ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Todo updated')),
+              );
               } else if (next.isError) {
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("An error occurred"),
-                    content: Text(next.message),
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Error updating todo, pls try again"),
+                    backgroundColor: Colors.red,
                   ),
                 );
+                Navigator.pop(context);
               }
             });
+            final editState = ref
+                .watch(todoProvider.select((state) => state.updateTodoState));
             return SingleChildScrollView(
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.8,
@@ -83,6 +89,11 @@ void showEditTodo({
                           ),
                         ],
                       ),
+                      const SizedBox(height: 20),
+                      if (editState is UiStateLoading)
+                        const Center(child: CircularProgressIndicator()),
+                      // else if (editState is UiStateError)
+
                       Center(
                           child: MaterialButton(
                         minWidth: double.infinity,
@@ -90,7 +101,7 @@ void showEditTodo({
                         color: Colors.deepPurple,
                         onPressed: () {
                           ref.read(todoProvider.notifier).updateTodo(
-                              id,
+                              updateId,
                               UpdateTodo(
                                 id: updateId,
                                 todo: controller.text,

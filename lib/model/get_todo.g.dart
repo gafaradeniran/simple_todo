@@ -11,6 +11,10 @@ TodoItem _$TodoItemFromJson(Map<String, dynamic> json) => TodoItem(
       todo: json['todo'] as String,
       completed: json['completed'] as bool,
       userId: (json['userId'] as num).toInt(),
+      isDeleted: json['isDeleted'] as bool? ?? false,
+      deletedOn: json['deletedOn'] == null
+          ? null
+          : DateTime.parse(json['deletedOn'] as String),
     );
 
 Map<String, dynamic> _$TodoItemToJson(TodoItem instance) => <String, dynamic>{
@@ -18,6 +22,8 @@ Map<String, dynamic> _$TodoItemToJson(TodoItem instance) => <String, dynamic>{
       'todo': instance.todo,
       'completed': instance.completed,
       'userId': instance.userId,
+      'isDeleted': instance.isDeleted,
+      'deletedOn': instance.deletedOn?.toIso8601String(),
     };
 
 GetTodos _$GetTodosFromJson(Map<String, dynamic> json) => GetTodos(

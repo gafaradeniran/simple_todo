@@ -6,6 +6,7 @@ import 'package:simple_todo/utils/ui_state.dart';
 void showDeleteDialog({
   required BuildContext context,
   required int id,
+  required VoidCallback onDelete,
 }) {
   showModalBottomSheet(
     context: context,
@@ -21,13 +22,13 @@ void showDeleteDialog({
             if (next.isSuccess) {
               Navigator.pop(context);
             } else if (next.isError) {
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("An error occurred"),
-                  content: Text(next.message),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("An Error occoured, try again"),
+                  backgroundColor: Colors.red,
                 ),
               );
+              Navigator.pop(context);
             }
           });
 
@@ -63,6 +64,7 @@ void showDeleteDialog({
                       deleteState.message,
                       style: const TextStyle(color: Colors.red),
                     ),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
@@ -86,11 +88,8 @@ void showDeleteDialog({
                       Expanded(
                         child: Consumer(builder: (context, ref, child) {
                           return MaterialButton(
-                            onPressed: () async {
-                              await ref
-                                  .read(todoProvider.notifier)
-                                  .deleteTodo(id);
-                                  
+                            onPressed: () {
+                              onDelete();
                             },
                             elevation: 0,
                             height: 40,
@@ -107,7 +106,6 @@ void showDeleteDialog({
                       ),
                     ],
                   ),
-                  const Spacer(),
                 ],
               ),
             ),
